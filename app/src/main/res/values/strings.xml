@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">NoteKeeper</string>
+    <string name="edit_note">Edit Note</string>
     <string name="action_settings">Settings</string>
 </resources>
