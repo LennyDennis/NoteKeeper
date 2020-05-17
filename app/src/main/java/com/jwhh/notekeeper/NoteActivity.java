@@ -19,6 +19,9 @@ public class NoteActivity extends AppCompatActivity {
     public static final int POSITION_NOT_SET = -1;
     private NoteInfo mNoteInfo;
     private boolean mIsNewNote;
+    private Spinner mSpinnerCourses;
+    private EditText mNoteTitle;
+    private EditText mNoteText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,20 +30,20 @@ public class NoteActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        Spinner spinnerCourses = findViewById(R.id.spinner_courses);
+        mSpinnerCourses = findViewById(R.id.spinner_courses);
 
         List<CourseInfo> courses = DataManager.getInstance().getCourses();
         ArrayAdapter<CourseInfo> courseInfoArrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item,courses);
         courseInfoArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerCourses.setAdapter(courseInfoArrayAdapter);
+        mSpinnerCourses.setAdapter(courseInfoArrayAdapter);
 
         readDisplayStateValue();
 
-        EditText noteTitle = findViewById(R.id.note_title);
-        EditText noteText = findViewById(R.id.note_text);
+        mNoteTitle = findViewById(R.id.note_title);
+        mNoteText = findViewById(R.id.note_text);
 
         if(!mIsNewNote) {
-            displayNote(spinnerCourses, noteTitle, noteText);
+            displayNote(mSpinnerCourses, mNoteTitle, mNoteText);
         }
     }
 
@@ -57,7 +60,7 @@ public class NoteActivity extends AppCompatActivity {
         int position = intent.getIntExtra(NOTE_POSITION, POSITION_NOT_SET);
         mIsNewNote = position == POSITION_NOT_SET;
         if(!mIsNewNote){
-            mNoteInfo = DataManager.getInstance().getNotes().get(position);
+             mNoteInfo = DataManager.getInstance().getNotes().get(position);
         }
     }
 
@@ -76,10 +79,23 @@ public class NoteActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_send_mail) {
+            sendEmail();
             return true;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void sendEmail() {
+        CourseInfo courseInfo = (CourseInfo) mSpinnerCourses.getSelectedItem();
+        String subject = mNoteTitle.getText().toString();
+        String text = "Checkout what I have learnt in the pluralsight course. \""+
+                courseInfo.getTitle()+"\"\n"+mNoteText.getText();
+        Intent newIntent = new Intent(Intent.ACTION_SEND);
+        newIntent.setType("message/rfc2822");
+        newIntent.putExtra(Intent.EXTRA_SUBJECT,subject);
+        newIntent.putExtra(Intent.EXTRA_TEXT,text);
+        startActivity(newIntent);
     }
 }
