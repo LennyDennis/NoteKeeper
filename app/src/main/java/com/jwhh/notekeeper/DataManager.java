@@ -33,7 +33,7 @@ public class DataManager {
     public int createNewNote() {
         NoteInfo note = new NoteInfo(null, null, null);
         mNotes.add(note);
-        return mNotes.size() - 1;
+        return mNotes.size()-1;
     }
 
     public int findNote(NoteInfo note) {
@@ -188,6 +188,16 @@ public class DataManager {
         modules.add(new ModuleInfo("java_core_m10", "Persisting Objects with Serialization"));
 
         return new CourseInfo("java_core", "Java Fundamentals: The Core Platform", modules);
+    }
+
+    public int createNewNote(CourseInfo course, String noteTitle, String noteText) {
+        int index = createNewNote();
+        NoteInfo noteInfo = getNotes().get(index);
+
+        noteInfo.setCourse(course);
+        noteInfo.setTitle(noteTitle);
+        noteInfo.setText(noteText);
+        return index;
     }
     //endregion
 
