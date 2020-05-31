@@ -108,7 +108,7 @@ public class NoteActivity extends AppCompatActivity {
 
     private void saveNote() {
         mNoteInfo.setCourse((CourseInfo) mSpinnerCourses.getSelectedItem());
-        mNoteInfo.setText(mNoteTitle.getText().toString());
+        mNoteInfo.setTitle(mNoteTitle.getText().toString());
         mNoteInfo.setText(mNoteText.getText().toString());
     }
 
