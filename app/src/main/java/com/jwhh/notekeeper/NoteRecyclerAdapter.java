@@ -1,6 +1,7 @@
 package com.jwhh.notekeeper;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,11 +28,22 @@ public class NoteRecyclerAdapter extends RecyclerView.Adapter<NoteRecyclerAdapte
 
         public final TextView mTextCourse;
         public final TextView mTextTitle;
+        public int currentPosition;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             mTextCourse = itemView.findViewById(R.id.text_course);
             mTextTitle = itemView.findViewById(R.id.text_title);
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(mContext, NoteActivity.class);
+                    intent.putExtra(NoteActivity.NOTE_POSITION, currentPosition);
+                    mContext.startActivity(intent);
+
+                }
+            });
         }
     }
 
@@ -47,6 +59,7 @@ public class NoteRecyclerAdapter extends RecyclerView.Adapter<NoteRecyclerAdapte
         NoteInfo noteInfo = mNoteInfo.get(position);
         holder.mTextCourse.setText(noteInfo.getCourse().getTitle());
         holder.mTextTitle.setText(noteInfo.getTitle());
+        holder.currentPosition = position;
     }
 
     @Override
