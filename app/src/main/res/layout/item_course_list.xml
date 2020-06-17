@@ -26,6 +26,13 @@
                 android:text="TextView"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
+            <ImageView
+                android:id="@+id/imageView2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:tint="@color/pluralSight"
+                app:srcCompat="@drawable/ic_menu_slideshow" />
+
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 </FrameLayout>

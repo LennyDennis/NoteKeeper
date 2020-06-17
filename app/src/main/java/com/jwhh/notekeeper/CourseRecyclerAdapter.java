@@ -57,6 +57,8 @@ public class CourseRecyclerAdapter extends RecyclerView.Adapter<CourseRecyclerAd
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         CourseInfo course = mCourses.get(position);
         holder.currentPosition = position;
+        holder.mTextCourse.setText(course.getTitle());
+
     }
 
     @Override

@@ -13,4 +13,8 @@
     <string name="menu_home">Home</string>
     <string name="menu_gallery">Gallery</string>
     <string name="menu_slideshow">Slideshow</string>
+    <string name="note_title">Note title</string>
+    <string name="note_text">Note text</string>
+    <string name="nav_share_message">Don\'t you think you\'ve shared enough</string>
+    <string name="nav_send_message">Send</string>
 </resources>
