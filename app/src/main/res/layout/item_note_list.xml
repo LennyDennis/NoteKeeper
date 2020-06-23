@@ -35,7 +35,7 @@
             <TextView
                 android:id="@+id/text_course"
                 android:layout_width="311dp"
-                android:layout_height="32dp"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="23dp"
                 android:text="TextView"
                 android:textAppearance="@style/courseTitle"
