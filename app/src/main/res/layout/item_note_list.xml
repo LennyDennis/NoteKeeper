@@ -12,7 +12,7 @@
         app:cardCornerRadius="4dp"
         app:cardElevation="4dp"
         app:cardUseCompatPadding="true"
-        app:contentPadding="16dp" >
+        app:contentPadding="10dp" >
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/linearLayout"
@@ -21,22 +21,22 @@
 
             <ImageView
                 android:id="@+id/imageView3"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="5dp"
-                android:tint="@color/pluralSight"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:scaleType="fitCenter"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/text_course"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/ic_baseline_assignment_24" />
+                app:srcCompat="@drawable/ic_baseline_assignment_24"
+                app:tint="@color/pluralSight" />
 
             <TextView
                 android:id="@+id/text_course"
                 android:layout_width="311dp"
+                android:layout_marginStart="20dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="23dp"
+                android:layout_marginTop="5dp"
                 android:text="TextView"
                 android:textAppearance="@style/courseTitle"
                 app:layout_constraintBottom_toTopOf="@+id/text_title"
@@ -49,6 +49,7 @@
             <TextView
                 android:id="@+id/text_title"
                 android:layout_width="0dp"
+                android:layout_marginTop="5dp"
                 android:layout_height="wrap_content"
                 android:text="TextView"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"

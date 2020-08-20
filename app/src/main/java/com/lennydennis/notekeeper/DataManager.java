@@ -34,10 +34,10 @@ public class DataManager {
                 NoteInfoEntry.COLUMN_NOTE_TITLE,
                 NoteInfoEntry.COLUMN_NOTE_TEXT,
                 NoteInfoEntry.COLUMN_COURSE_ID};
-
-        final Cursor courseCursor = database.query(CourseInfoEntry.TABLE_NAME, courseColumns, null, null, null, null, null);
+        String noteOrder = NoteInfoEntry.COLUMN_COURSE_ID+","+NoteInfoEntry.COLUMN_NOTE_TITLE;
+        final Cursor courseCursor = database.query(CourseInfoEntry.TABLE_NAME, courseColumns, null, null, null, null, CourseInfoEntry.COLUMN_COURSE_TITLE + " DESC");
         loadCoursesFromDatabase(courseCursor);
-        final Cursor notesCursor = database.query(NoteInfoEntry.TABLE_NAME, notesColumns, null, null, null, null, null);
+        final Cursor notesCursor = database.query(NoteInfoEntry.TABLE_NAME, notesColumns, null, null, null, null, noteOrder);
         loadNotesFromDatabase(notesCursor);
     }
 
