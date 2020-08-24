@@ -5,9 +5,9 @@ import android.os.Bundle;
 import androidx.lifecycle.ViewModel;
 
 public class NoteActivityViewModel extends ViewModel {
-    public static final String ORIGINAL_NOTE_COURSE_ID = "com.jwhh.notekeeper.ORIGINAL_NOTE_COURSE_ID";
-    public static final String ORIGINAL_NOTE_TITLE = "com.jwhh.notekeeper.ORIGINAL_NOTE_TITLE";
-    public static final String ORIGINAL_NOTE_TEXT = "com.jwhh.notekeeper.ORIGINAL_NOTE_TEXT";
+    public static final String ORIGINAL_NOTE_COURSE_ID = "com.lennydennis.notekeeper.ORIGINAL_NOTE_COURSE_ID";
+    public static final String ORIGINAL_NOTE_TITLE = "com.lennydennis.notekeeper.ORIGINAL_NOTE_TITLE";
+    public static final String ORIGINAL_NOTE_TEXT = "com.lennydennis.notekeeper.ORIGINAL_NOTE_TEXT";
 
     public String mOriginalNoteCourseID;
     public String mOriginalNoteTitle;
