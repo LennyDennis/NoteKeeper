@@ -28,14 +28,14 @@ public class NoteActivity extends AppCompatActivity {
     private final String TAG = getClass().getSimpleName();
     public static final String NOTE_ID = "com.lennydennis.notekeeper.NOTE_POSITION";
     public static final int ID_NOT_SET = -1;
-    private NoteInfo mNoteInfo = new NoteInfo(DataManager.getInstance().getCourses().get(0),"","");
+    private NoteInfo mNoteInfo = new NoteInfo(DataManager.getInstance().getCourses().get(0), "", "");
     private boolean mIsNewNote;
     private Spinner mSpinnerCourses;
     private EditText mNoteTitle;
     private EditText mNoteText;
     private int mNoteId;
     private boolean mIsCanceling;
-    private  NoteActivityViewModel mViewModel;
+    private NoteActivityViewModel mViewModel;
     private NoteKeeperOpenHelper mNoteKeeperOpenHelper;
     private Cursor mNoteCursor;
     private int mCourseIdPos;
@@ -61,15 +61,15 @@ public class NoteActivity extends AppCompatActivity {
         ViewModelProvider viewModelProvider = new ViewModelProvider(getViewModelStore(), ViewModelProvider.AndroidViewModelFactory.getInstance(getApplication()));
         mViewModel = viewModelProvider.get(NoteActivityViewModel.class);
 
-        if(mViewModel.mIsNewlyCreated && savedInstanceState != null){
+        if (mViewModel.mIsNewlyCreated && savedInstanceState != null) {
             mViewModel.restoreState(savedInstanceState);
         }
         mViewModel.mIsNewlyCreated = false;
 
         mSpinnerCourses = findViewById(R.id.spinner_courses);
 
-        mSimpleCursorAdapter = new SimpleCursorAdapter(this, android.R.layout.simple_spinner_item,null,
-                new String[] {CourseInfoEntry.COLUMN_COURSE_TITLE},new int[] {android.R.id.text1},0);
+        mSimpleCursorAdapter = new SimpleCursorAdapter(this, android.R.layout.simple_spinner_item, null,
+                new String[]{CourseInfoEntry.COLUMN_COURSE_TITLE}, new int[]{android.R.id.text1}, 0);
         mSimpleCursorAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mSpinnerCourses.setAdapter(mSimpleCursorAdapter);
 
@@ -77,11 +77,11 @@ public class NoteActivity extends AppCompatActivity {
 
         readDisplayStateValue();
         saveOriginalStateValue();
-        
+
         mNoteTitle = findViewById(R.id.note_title);
         mNoteText = findViewById(R.id.note_text);
 
-        if(!mIsNewNote) {
+        if (!mIsNewNote) {
             loadNoteData();
         }
 
@@ -95,21 +95,21 @@ public class NoteActivity extends AppCompatActivity {
                 CourseInfoEntry.COLUMN_COURSE_ID,
                 CourseInfoEntry._ID
         };
-        Cursor cursor = sqLiteDatabase.query(CourseInfoEntry.TABLE_NAME,courseColumns,null,null,null,null,CourseInfoEntry.COLUMN_COURSE_TITLE);
+        Cursor cursor = sqLiteDatabase.query(CourseInfoEntry.TABLE_NAME, courseColumns, null, null, null, null, CourseInfoEntry.COLUMN_COURSE_TITLE);
         mSimpleCursorAdapter.changeCursor(cursor);
     }
 
     private void loadNoteData() {
         SQLiteDatabase sqLiteDatabase = mNoteKeeperOpenHelper.getReadableDatabase();
 
-         String selection = NoteInfoEntry._ID+" = ?";
+        String selection = NoteInfoEntry._ID + " = ?";
 
-        String[] selectionArgs =  {Integer.toString(mNoteId)};
+        String[] selectionArgs = {Integer.toString(mNoteId)};
 
         String[] noteColumns = {
-             NoteInfoEntry.COLUMN_COURSE_ID,
-             NoteInfoEntry.COLUMN_NOTE_TITLE,
-             NoteInfoEntry.COLUMN_NOTE_TEXT
+                NoteInfoEntry.COLUMN_COURSE_ID,
+                NoteInfoEntry.COLUMN_NOTE_TITLE,
+                NoteInfoEntry.COLUMN_NOTE_TEXT
         };
 
         mNoteCursor = sqLiteDatabase.query(NoteInfoEntry.TABLE_NAME, noteColumns, selection, selectionArgs, null, null, null);
@@ -125,13 +125,13 @@ public class NoteActivity extends AppCompatActivity {
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        if(outState != null){
+        if (outState != null) {
             mViewModel.saveState(outState);
         }
     }
 
     private void saveOriginalStateValue() {
-        if(mIsNewNote)
+        if (mIsNewNote)
             return;
 
         mViewModel.mOriginalNoteCourseID = mNoteInfo.getCourse().getCourseId();
@@ -142,21 +142,21 @@ public class NoteActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        if(mIsCanceling){
-            Log.i(TAG, "onPause: Cancelling note at position"+ mNoteId);
-            if(mIsNewNote) {
+        if (mIsCanceling) {
+            Log.i(TAG, "onPause: Cancelling note at position" + mNoteId);
+            if (mIsNewNote) {
                 DataManager.getInstance().removeNote(mNoteId);
-            }else {
+            } else {
                 storePreviousNoteValues();
             }
-        }else {
+        } else {
             saveNote();
         }
         Log.d(TAG, "onPause");
     }
 
     private void storePreviousNoteValues() {
-        CourseInfo course= DataManager.getInstance().getCourse(mViewModel.mOriginalNoteCourseID);
+        CourseInfo course = DataManager.getInstance().getCourse(mViewModel.mOriginalNoteCourseID);
         mNoteInfo.setCourse(course);
         mNoteInfo.setTitle(mViewModel.mOriginalNoteTitle);
         mNoteInfo.setText(mViewModel.mOriginalNoteText);
@@ -173,23 +173,39 @@ public class NoteActivity extends AppCompatActivity {
         String courseId = mNoteCursor.getString(mCourseIdPos);
         String noteTitle = mNoteCursor.getString(mNoteTitlePos);
         String noteText = mNoteCursor.getString(mNoteTextPos);
-        List<CourseInfo> courseInfo = DataManager.getInstance().getCourses();
-        CourseInfo course = DataManager.getInstance().getCourse(courseId);
-        int courseIndex = courseInfo.indexOf(course);
+
+        int courseIndex = getIndexOfCourseId(courseId);
         mSpinnerCourses.setSelection(courseIndex);
         mNoteTitle.setText(noteTitle);
         mNoteText.setText(noteText);
     }
 
+    private int getIndexOfCourseId(String courseId) {
+        Cursor cursor = mSimpleCursorAdapter.getCursor();
+        int courseIdPos = cursor.getColumnIndex(CourseInfoEntry.COLUMN_COURSE_ID);
+        int courseRowIndex = 0;
+
+        boolean more = cursor.moveToFirst();
+        while (more) {
+            String cursorCourseId = cursor.getString(courseIdPos);
+            if (cursorCourseId.equals(courseId))
+                break;
+
+            courseRowIndex++;
+            more = cursor.moveToNext();
+        }
+        return courseRowIndex;
+    }
+
     private void readDisplayStateValue() {
         Intent intent = getIntent();
         mNoteId = intent.getIntExtra(NOTE_ID, ID_NOT_SET);
-        mIsNewNote =  mNoteId == ID_NOT_SET;
-        if(mIsNewNote){
+        mIsNewNote = mNoteId == ID_NOT_SET;
+        if (mIsNewNote) {
             createNewNote();
         }
 
-        Log.i(TAG, "readDisplayStateValue: "+ mNoteId);
+        Log.i(TAG, "readDisplayStateValue: " + mNoteId);
     }
 
     private void createNewNote() {
@@ -216,10 +232,10 @@ public class NoteActivity extends AppCompatActivity {
         if (id == R.id.action_send_mail) {
             sendEmail();
             return true;
-        }else if(id == R.id.action_cancel){
+        } else if (id == R.id.action_cancel) {
             mIsCanceling = true;
             finish();
-        }else if(id == R.id.action_next){
+        } else if (id == R.id.action_next) {
             moveNext();
         }
 
@@ -229,8 +245,8 @@ public class NoteActivity extends AppCompatActivity {
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         MenuItem menuItem = menu.findItem(R.id.action_next);
-        int lastNoteIndex = DataManager.getInstance().getNotes().size()-1;
-        menuItem.setEnabled(mNoteId <lastNoteIndex);
+        int lastNoteIndex = DataManager.getInstance().getNotes().size() - 1;
+        menuItem.setEnabled(mNoteId < lastNoteIndex);
         return super.onPrepareOptionsMenu(menu);
     }
 
@@ -248,12 +264,12 @@ public class NoteActivity extends AppCompatActivity {
     private void sendEmail() {
         CourseInfo courseInfo = (CourseInfo) mSpinnerCourses.getSelectedItem();
         String subject = mNoteTitle.getText().toString();
-        String text = "Checkout what I have learnt in the pluralsight course. \""+
-                courseInfo.getTitle()+"\"\n"+mNoteText.getText();
+        String text = "Checkout what I have learnt in the pluralsight course. \"" +
+                courseInfo.getTitle() + "\"\n" + mNoteText.getText();
         Intent newIntent = new Intent(Intent.ACTION_SEND);
         newIntent.setType("message/rfc2822");
-        newIntent.putExtra(Intent.EXTRA_SUBJECT,subject);
-        newIntent.putExtra(Intent.EXTRA_TEXT,text);
+        newIntent.putExtra(Intent.EXTRA_SUBJECT, subject);
+        newIntent.putExtra(Intent.EXTRA_TEXT, text);
         startActivity(newIntent);
     }
 }

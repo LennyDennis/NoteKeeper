@@ -36,6 +36,7 @@ public class DataManager {
                 NoteInfoEntry.COLUMN_NOTE_TEXT,
                 NoteInfoEntry.COLUMN_COURSE_ID,
                 NoteInfoEntry._ID};
+
         String noteOrder = NoteInfoEntry.COLUMN_COURSE_ID+","+NoteInfoEntry.COLUMN_NOTE_TITLE;
 
         final Cursor courseCursor = database.query(CourseInfoEntry.TABLE_NAME, courseColumns, null, null, null, null, CourseInfoEntry.COLUMN_COURSE_TITLE + " DESC");
@@ -52,6 +53,7 @@ public class DataManager {
 
         DataManager dataManager = getInstance();
         dataManager.mNotes.clear();
+
         while(notesCursor.moveToNext()){
             String noteTitle = notesCursor.getString(noteTitlePos);
             String noteText = notesCursor.getString(noteTextPos);
