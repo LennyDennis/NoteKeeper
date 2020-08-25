@@ -16,7 +16,7 @@ import com.lennydennis.notekeeper.Database.NoteKeeperDatabaseContract.NoteInfoEn
 
 import java.util.List;
 
-public class NoteRecyclerAdapter extends RecyclerView.Adapter<NoteRecyclerAdapter.ViewHolder>{
+public class NoteRecyclerAdapter extends RecyclerView.Adapter<NoteRecyclerAdapter.ViewHolder> {
 
     private final Context mContext;
     private Cursor mCursor;
@@ -34,23 +34,20 @@ public class NoteRecyclerAdapter extends RecyclerView.Adapter<NoteRecyclerAdapte
     }
 
     private void populateColumnPosition() {
-        if(mCursor == null)
+        if (mCursor == null)
             return;
         mCoursePos = mCursor.getColumnIndex(NoteInfoEntry.COLUMN_COURSE_ID);
         mNoteTilePos = mCursor.getColumnIndex(NoteInfoEntry.COLUMN_NOTE_TITLE);
-        mIdPos =  mCursor.getColumnIndex(NoteInfoEntry._ID);
+        mIdPos = mCursor.getColumnIndex(NoteInfoEntry._ID);
     }
 
-    public void changeCursor(Cursor cursor){
-        if(mCursor != null){
-           mCursor.close();
-        }
+    public void changeCursor(Cursor cursor) {
         mCursor = cursor;
         populateColumnPosition();
         notifyDataSetChanged();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder{
+    public class ViewHolder extends RecyclerView.ViewHolder {
 
         public final TextView mTextCourse;
         public final TextView mTextTitle;
@@ -94,9 +91,8 @@ public class NoteRecyclerAdapter extends RecyclerView.Adapter<NoteRecyclerAdapte
 
     @Override
     public int getItemCount() {
-        return mCursor ==   null ? 0 : mCursor.getCount();
+        int count = mCursor.getCount();
+        return mCursor == null ? 0 : count;
     }
-
-
 
 }

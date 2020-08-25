@@ -95,39 +95,6 @@ public class NoteActivity extends AppCompatActivity implements LoaderManager.Loa
 
         Log.d(TAG, "onCreate");
     }
-//
-//    private void loadCourseData() {
-//        SQLiteDatabase sqLiteDatabase = mNoteKeeperOpenHelper.getReadableDatabase();
-//        String[] courseColumns = {
-//                CourseInfoEntry.COLUMN_COURSE_TITLE,
-//                CourseInfoEntry.COLUMN_COURSE_ID,
-//                CourseInfoEntry._ID
-//        };
-//        Cursor cursor = sqLiteDatabase.query(CourseInfoEntry.TABLE_NAME, courseColumns, null, null, null, null, CourseInfoEntry.COLUMN_COURSE_TITLE);
-//        mSimpleCursorAdapter.changeCursor(cursor);
-//    }
-
-//    private void loadNoteData() {
-//        SQLiteDatabase sqLiteDatabase = mNoteKeeperOpenHelper.getReadableDatabase();
-//
-//        String selection = NoteInfoEntry._ID + " = ?";
-//
-//        String[] selectionArgs = {Integer.toString(mNoteId)};
-//
-//        String[] noteColumns = {
-//                NoteInfoEntry.COLUMN_COURSE_ID,
-//                NoteInfoEntry.COLUMN_NOTE_TITLE,
-//                NoteInfoEntry.COLUMN_NOTE_TEXT
-//        };
-//
-//        mNoteCursor = sqLiteDatabase.query(NoteInfoEntry.TABLE_NAME, noteColumns, selection, selectionArgs, null, null, null);
-//        mCourseIdPos = mNoteCursor.getColumnIndex(NoteInfoEntry.COLUMN_COURSE_ID);
-//        mNoteTitlePos = mNoteCursor.getColumnIndex(NoteInfoEntry.COLUMN_NOTE_TITLE);
-//        mNoteTextPos = mNoteCursor.getColumnIndex(NoteInfoEntry.COLUMN_NOTE_TEXT);
-//        mNoteCursor.moveToNext();
-//        displayNote();
-//
-//    }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
@@ -347,7 +314,7 @@ public class NoteActivity extends AppCompatActivity implements LoaderManager.Loa
         mCourseIdPos = mNoteCursor.getColumnIndex(NoteInfoEntry.COLUMN_COURSE_ID);
         mNoteTitlePos = mNoteCursor.getColumnIndex(NoteInfoEntry.COLUMN_NOTE_TITLE);
         mNoteTextPos = mNoteCursor.getColumnIndex(NoteInfoEntry.COLUMN_NOTE_TEXT);
-        mNoteCursor.moveToNext();
+        mNoteCursor.moveToFirst();
         mNoteQueryFinished = true;
         displayNoteWhenQueriesFinish();
 

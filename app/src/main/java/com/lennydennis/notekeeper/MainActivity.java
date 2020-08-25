@@ -18,8 +18,13 @@ import com.lennydennis.notekeeper.Database.NoteKeeperDatabaseContract;
 import com.lennydennis.notekeeper.Database.NoteKeeperDatabaseContract.NoteInfoEntry;
 import com.lennydennis.notekeeper.Database.NoteKeeperOpenHelper;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.core.view.GravityCompat;
+import androidx.loader.app.LoaderManager;
+import androidx.loader.content.CursorLoader;
+import androidx.loader.content.Loader;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -34,8 +39,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 
 public class  MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, LoaderManager.LoaderCallbacks<Cursor> {
 
+    private static final int LOADER_NOTES = 0;
     private AppBarConfiguration mAppBarConfiguration;
     private NoteRecyclerAdapter mNoteRecyclerAdapter;
     private RecyclerView mRecyclerItems;
@@ -82,21 +88,8 @@ public class  MainActivity extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
-        loadNotes();
+        LoaderManager.getInstance(this).restartLoader(LOADER_NOTES,null,this);
         updateNavHeader();
-    }
-
-    private void loadNotes() {
-        SQLiteDatabase sqLiteDatabase = mNoteKeeperOpenHelper.getReadableDatabase();
-
-        final String[] notesColumns = {
-                NoteInfoEntry.COLUMN_NOTE_TITLE,
-                NoteInfoEntry.COLUMN_COURSE_ID,
-                NoteInfoEntry._ID};
-
-        String noteOrder = NoteInfoEntry.COLUMN_COURSE_ID+","+ NoteInfoEntry.COLUMN_NOTE_TITLE;
-        final Cursor notesCursor = sqLiteDatabase.query(NoteInfoEntry.TABLE_NAME, notesColumns, null, null, null, null, noteOrder);
-        mNoteRecyclerAdapter.changeCursor(notesCursor);
     }
 
     @Override
@@ -224,5 +217,41 @@ public class  MainActivity extends AppCompatActivity
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+
+    @NonNull
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, @Nullable Bundle args) {
+        CursorLoader cursorLoader = null;
+        if(id == LOADER_NOTES){
+            cursorLoader = new CursorLoader(this){
+                @Override
+                public Cursor loadInBackground() {
+                    SQLiteDatabase sqLiteDatabase = mNoteKeeperOpenHelper.getReadableDatabase();
+
+                    final String[] notesColumns = {
+                            NoteInfoEntry.COLUMN_NOTE_TITLE,
+                            NoteInfoEntry.COLUMN_COURSE_ID,
+                            NoteInfoEntry._ID};
+
+                    final String noteOrder = NoteInfoEntry.COLUMN_COURSE_ID+","+ NoteInfoEntry.COLUMN_NOTE_TITLE;
+                    return sqLiteDatabase.query(NoteInfoEntry.TABLE_NAME, notesColumns, null, null, null, null, noteOrder);
+                }
+            };
+        }
+        return cursorLoader;
+    }
+
+    @Override
+    public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor data) {
+        if(loader.getId() == LOADER_NOTES)
+            mNoteRecyclerAdapter.changeCursor(data);
+    }
+
+    @Override
+    public void onLoaderReset(@NonNull Loader<Cursor> loader) {
+        if(loader.getId() == LOADER_NOTES)
+            mNoteRecyclerAdapter.changeCursor(null);
     }
 }
