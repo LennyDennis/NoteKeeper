@@ -11,7 +11,7 @@ import com.lennydennis.notekeeper.Database.NoteKeeperDatabaseContract.NoteInfoEn
 
 public class NoteKeeperOpenHelper extends SQLiteOpenHelper {
     public static final String DATABASE_NAME = "NoteKeeper.db";
-    public static final int DATABASE_VERSION = 1;
+    public static final int DATABASE_VERSION = 2;
 
     public NoteKeeperOpenHelper(@Nullable Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -32,6 +32,9 @@ public class NoteKeeperOpenHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
-
+        if(i<2){
+            sqLiteDatabase.execSQL(CourseInfoEntry.SQL_CREATE_INDEX1);
+            sqLiteDatabase.execSQL(NoteInfoEntry.SQL_CREATE_INDEX1);
+        }
     }
 }
