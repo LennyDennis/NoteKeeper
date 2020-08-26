@@ -141,9 +141,9 @@ public class NoteActivity extends AppCompatActivity implements LoaderManager.Loa
 
     private void saveNote() {
         String courseId = selectedCourseID();
-        String noteTitle  = mNoteTitle.getText().toString();
+        String noteTitle = mNoteTitle.getText().toString();
         String noteText = mNoteText.getText().toString();
-        saveNoteToDatabase(courseId,noteTitle,noteText);
+        saveNoteToDatabase(courseId, noteTitle, noteText);
 
     }
 
@@ -209,8 +209,13 @@ public class NoteActivity extends AppCompatActivity implements LoaderManager.Loa
     }
 
     private void createNewNote() {
-        DataManager dataManager = DataManager.getInstance();
-        mNoteId = dataManager.createNewNote();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(NoteInfoEntry.COLUMN_COURSE_ID, "");
+        contentValues.put(NoteInfoEntry.COLUMN_NOTE_TITLE,"");
+        contentValues.put(NoteInfoEntry.COLUMN_NOTE_TEXT, "");
+
+        SQLiteDatabase database = mNoteKeeperOpenHelper.getWritableDatabase();
+        mNoteId = (int) database.insert(NoteInfoEntry.TABLE_NAME, null, contentValues);
 
     }
 
