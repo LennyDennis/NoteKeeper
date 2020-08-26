@@ -1,5 +1,6 @@
 package com.lennydennis.notekeeper;
 
+import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -139,9 +140,33 @@ public class NoteActivity extends AppCompatActivity implements LoaderManager.Loa
     }
 
     private void saveNote() {
-        mNoteInfo.setCourse((CourseInfo) mSpinnerCourses.getSelectedItem());
-        mNoteInfo.setTitle(mNoteTitle.getText().toString());
-        mNoteInfo.setText(mNoteText.getText().toString());
+        String courseId = selectedCourseID();
+        String noteTitle  = mNoteTitle.getText().toString();
+        String noteText = mNoteText.getText().toString();
+        saveNoteToDatabase(courseId,noteTitle,noteText);
+
+    }
+
+    private String selectedCourseID() {
+        int selectedPosition = mSpinnerCourses.getSelectedItemPosition();
+        Cursor cursor = mSimpleCursorAdapter.getCursor();
+        cursor.moveToPosition(selectedPosition);
+        int courseIdPos = cursor.getColumnIndex(CourseInfoEntry.COLUMN_COURSE_ID);
+        String courseId = cursor.getString(courseIdPos);
+        return courseId;
+    }
+
+    public void saveNoteToDatabase(String courseId, String noteTitle, String noteText) {
+        String selection = NoteInfoEntry._ID + " = ?";
+        String[] selectionArgs = {Integer.toString(mNoteId)};
+
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(NoteInfoEntry.COLUMN_COURSE_ID, courseId);
+        contentValues.put(NoteInfoEntry.COLUMN_NOTE_TITLE, noteTitle);
+        contentValues.put(NoteInfoEntry.COLUMN_NOTE_TEXT, noteText);
+
+        SQLiteDatabase sqLiteDatabase = mNoteKeeperOpenHelper.getWritableDatabase();
+        sqLiteDatabase.update(NoteInfoEntry.TABLE_NAME, contentValues, selection, selectionArgs);
     }
 
     private void displayNote() {
@@ -283,7 +308,6 @@ public class NoteActivity extends AppCompatActivity implements LoaderManager.Loa
                 SQLiteDatabase sqLiteDatabase = mNoteKeeperOpenHelper.getReadableDatabase();
 
                 String selection = NoteInfoEntry._ID + " = ?";
-
                 String[] selectionArgs = {Integer.toString(mNoteId)};
 
                 String[] noteColumns = {
@@ -321,7 +345,7 @@ public class NoteActivity extends AppCompatActivity implements LoaderManager.Loa
     }
 
     private void displayNoteWhenQueriesFinish() {
-        if(mNoteQueryFinished && mCourseQueryFinished)
+        if (mNoteQueryFinished && mCourseQueryFinished)
             displayNote();
     }
 
@@ -332,7 +356,7 @@ public class NoteActivity extends AppCompatActivity implements LoaderManager.Loa
                 mNoteCursor.close();
             }
         } else if (loader.getId() == LOADER_COURSES) {
-           mSimpleCursorAdapter.changeCursor(null);
+            mSimpleCursorAdapter.changeCursor(null);
         }
     }
 }
