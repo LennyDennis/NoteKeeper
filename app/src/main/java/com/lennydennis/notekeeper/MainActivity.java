@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.preference.PreferenceManager;
 import android.view.MenuItem;
 import android.view.View;
@@ -59,6 +60,8 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        enableStrictMode();
+
         mNoteKeeperOpenHelper = new NoteKeeperOpenHelper(this);
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -84,6 +87,17 @@ public class MainActivity extends AppCompatActivity
                 .build();
 
         initializeDisplayContent();
+    }
+
+    private void enableStrictMode() {
+        if(BuildConfig.DEBUG){
+            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder()
+                    .detectAll()
+                    .penaltyLog()
+                    .build();
+
+            StrictMode.setThreadPolicy(policy);
+        }
     }
 
     @Override
