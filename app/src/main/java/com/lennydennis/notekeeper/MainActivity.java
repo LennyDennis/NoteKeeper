@@ -19,6 +19,7 @@ import com.lennydennis.notekeeper.Database.NoteKeeperDatabaseContract;
 import com.lennydennis.notekeeper.Database.NoteKeeperDatabaseContract.CourseInfoEntry;
 import com.lennydennis.notekeeper.Database.NoteKeeperDatabaseContract.NoteInfoEntry;
 import com.lennydennis.notekeeper.Database.NoteKeeperOpenHelper;
+import com.lennydennis.notekeeper.NoteKeeperProviderContract.Notes;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -90,7 +91,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void enableStrictMode() {
-        if(BuildConfig.DEBUG){
+        if (BuildConfig.DEBUG) {
             StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder()
                     .detectAll()
                     .penaltyLog()
@@ -239,27 +240,17 @@ public class MainActivity extends AppCompatActivity
     @Override
     public Loader<Cursor> onCreateLoader(int id, @Nullable Bundle args) {
         CursorLoader cursorLoader = null;
+
         if (id == LOADER_NOTES) {
-            cursorLoader = new CursorLoader(this) {
-                @Override
-                public Cursor loadInBackground() {
-                    SQLiteDatabase sqLiteDatabase = mNoteKeeperOpenHelper.getReadableDatabase();
 
-                    final String[] notesColumns = {
-                            NoteInfoEntry.COLUMN_NOTE_TITLE,
-                            NoteInfoEntry.getQName(NoteInfoEntry._ID),
-                            CourseInfoEntry.COLUMN_COURSE_TITLE};
+            final String[] notesColumns = {
+                    Notes._ID,
+                    Notes.COLUMN_NOTE_TITLE,
+                    Notes.COLUMN_COURSE_TITLE};
 
-                    final String noteOrder = CourseInfoEntry.COLUMN_COURSE_TITLE  + "," + NoteInfoEntry.COLUMN_NOTE_TITLE;
+            final String noteOrder = Notes.COLUMN_COURSE_TITLE + "," + Notes.COLUMN_NOTE_TITLE;
 
-                    String tablesWithJoin = NoteInfoEntry.TABLE_NAME + " JOIN " +
-                            CourseInfoEntry.TABLE_NAME + " ON " +
-                            NoteInfoEntry.getQName(NoteInfoEntry.COLUMN_COURSE_ID) +
-                            " = " + CourseInfoEntry.getQName(NoteInfoEntry.COLUMN_COURSE_ID);
-
-                    return sqLiteDatabase.query(tablesWithJoin, notesColumns, null, null, null, null, noteOrder);
-                }
-            };
+            cursorLoader = new CursorLoader(this, Notes.CONTENT_EXPANDED_URI, notesColumns, null, null, noteOrder);
         }
         return cursorLoader;
     }
