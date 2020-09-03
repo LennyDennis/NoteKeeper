@@ -288,7 +288,7 @@ public class NoteActivity extends AppCompatActivity implements LoaderManager.Loa
 
         Intent mainActivityIntent = new Intent(this, MainActivity.class);
         PendingIntent coursesIntent = PendingIntent.getActivity(this,
-                0, mainActivityIntent, 0);
+                0, mainActivityIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
 
         @SuppressLint("ResourceAsColor") Notification notification = new NotificationCompat.Builder(this, App.NOTE_ACTIVITY_NOTIFICATION)
@@ -305,7 +305,7 @@ public class NoteActivity extends AppCompatActivity implements LoaderManager.Loa
                 .setLargeIcon(picture)
                 .setContentIntent(noteIntent)
                 .setAutoCancel(true)
-                .addAction(R.drawable.ic_menu_gallery, "View all Notes", coursesIntent)
+                .addAction(0, "View All Notes", coursesIntent)
                 .setOnlyAlertOnce(true)
                 .build();
 

@@ -92,8 +92,7 @@ public class NoteRecyclerAdapter extends RecyclerView.Adapter<NoteRecyclerAdapte
 
     @Override
     public int getItemCount() {
-        int count = mCursor.getCount();
-        return mCursor == null ? 0 : count;
+        return mCursor == null ? 0 : mCursor.getCount();
     }
 
 }
