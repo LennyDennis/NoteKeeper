@@ -241,7 +241,7 @@ public class NoteActivity extends AppCompatActivity implements LoaderManager.Loa
     }
 
     private void createNewNote() {
-        @SuppressLint("StaticFieldLeak") AsyncTask<ContentValues, Void, Uri> task = new AsyncTask<ContentValues, Void, Uri>() {
+        @SuppressLint("StaticFieldLeak") AsyncTask<ContentValues, Integer, Uri> task = new AsyncTask<ContentValues, Integer, Uri>() {
             private ProgressBar mProgressBar;
 
             @Override
@@ -256,18 +256,34 @@ public class NoteActivity extends AppCompatActivity implements LoaderManager.Loa
                 ContentValues insertValues = contentValues[0];
                 Uri rowUri = getContentResolver().insert(Notes.CONTENT_URI, insertValues);
 
-                simulate5Seconds();
-                mProgressBar.setProgress(2);
+                try {
+                    simulate5Seconds();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                publishProgress(2);
 
-                simulate5Seconds();
-                mProgressBar.setProgress(3);
+                try {
+                    simulate5Seconds();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                publishProgress(3);
 
                 return rowUri;
             }
 
             @Override
+            protected void onProgressUpdate(Integer... values) {
+                int value = values[0];
+                mProgressBar.setProgress(value);
+                super.onProgressUpdate(values);
+            }
+
+            @Override
             protected void onPostExecute(Uri uri) {
                 mNoteUri = uri;
+                mProgressBar.setVisibility(View.GONE);
             }
         };
 
@@ -280,13 +296,8 @@ public class NoteActivity extends AppCompatActivity implements LoaderManager.Loa
 
     }
 
-    private void simulate5Seconds() {
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-
-            }
-        }, 2000);
+    private void simulate5Seconds() throws InterruptedException {
+        Thread.sleep(2000);
     }
 
     @Override
