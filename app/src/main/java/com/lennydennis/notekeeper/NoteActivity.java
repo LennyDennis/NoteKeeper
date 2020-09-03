@@ -280,9 +280,11 @@ public class NoteActivity extends AppCompatActivity implements LoaderManager.Loa
         final Bitmap picture = BitmapFactory.decodeResource(getResources(), R.drawable.ic_baseline_info_24);
         String noteText = mNoteText.getText().toString();
         String noteTitle = mNoteTitle.getText().toString();
+        int noteId = (int) ContentUris.parseId(mNoteUri);
         Intent noteActivityIntent = new Intent(this, NoteActivity.class);
+        noteActivityIntent.putExtra(NoteActivity.NOTE_ID,noteId);
         PendingIntent noteIntent = PendingIntent.getActivity(this,
-                0, noteActivityIntent, 0);
+                0, noteActivityIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         Intent mainActivityIntent = new Intent(this, MainActivity.class);
         PendingIntent coursesIntent = PendingIntent.getActivity(this,
