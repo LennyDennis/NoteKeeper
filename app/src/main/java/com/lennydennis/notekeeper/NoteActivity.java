@@ -26,10 +26,13 @@ import androidx.loader.app.LoaderManager;
 import androidx.loader.content.CursorLoader;
 import androidx.loader.content.Loader;
 
+import android.os.Handler;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
 
@@ -238,12 +241,52 @@ public class NoteActivity extends AppCompatActivity implements LoaderManager.Loa
     }
 
     private void createNewNote() {
+        @SuppressLint("StaticFieldLeak") AsyncTask<ContentValues, Void, Uri> task = new AsyncTask<ContentValues, Void, Uri>() {
+            private ProgressBar mProgressBar;
+
+            @Override
+            protected void onPreExecute() {
+                mProgressBar = findViewById(R.id.progress_bar);
+                mProgressBar.setVisibility(View.VISIBLE);
+                mProgressBar.setProgress(1);
+            }
+
+            @Override
+            protected Uri doInBackground(ContentValues... contentValues) {
+                ContentValues insertValues = contentValues[0];
+                Uri rowUri = getContentResolver().insert(Notes.CONTENT_URI, insertValues);
+
+                simulate5Seconds();
+                mProgressBar.setProgress(2);
+
+                simulate5Seconds();
+                mProgressBar.setProgress(3);
+
+                return rowUri;
+            }
+
+            @Override
+            protected void onPostExecute(Uri uri) {
+                mNoteUri = uri;
+            }
+        };
+
         ContentValues contentValues = new ContentValues();
         contentValues.put(Notes.COLUMN_COURSE_ID, "");
         contentValues.put(Notes.COLUMN_NOTE_TITLE, "");
         contentValues.put(Notes.COLUMN_NOTE_TEXT, "");
 
-        mNoteUri = getContentResolver().insert(Notes.CONTENT_URI, contentValues);
+        task.execute(contentValues);
+
+    }
+
+    private void simulate5Seconds() {
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+
+            }
+        }, 2000);
     }
 
     @Override
@@ -282,7 +325,7 @@ public class NoteActivity extends AppCompatActivity implements LoaderManager.Loa
         String noteTitle = mNoteTitle.getText().toString();
         int noteId = (int) ContentUris.parseId(mNoteUri);
         Intent noteActivityIntent = new Intent(this, NoteActivity.class);
-        noteActivityIntent.putExtra(NoteActivity.NOTE_ID,noteId);
+        noteActivityIntent.putExtra(NoteActivity.NOTE_ID, noteId);
         PendingIntent noteIntent = PendingIntent.getActivity(this,
                 0, noteActivityIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
