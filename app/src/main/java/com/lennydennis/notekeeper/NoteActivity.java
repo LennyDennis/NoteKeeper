@@ -151,7 +151,7 @@ public class NoteActivity extends AppCompatActivity implements LoaderManager.Loa
             @Override
             protected Object doInBackground(Object[] objects) {
                 SQLiteDatabase sqLiteDatabase = mNoteKeeperOpenHelper.getWritableDatabase();
-                sqLiteDatabase.delete(NoteInfoEntry.TABLE_NAME,selection,selectionArgs);
+                sqLiteDatabase.delete(NoteInfoEntry.TABLE_NAME, selection, selectionArgs);
                 return null;
             }
         };
@@ -240,10 +240,10 @@ public class NoteActivity extends AppCompatActivity implements LoaderManager.Loa
     private void createNewNote() {
         ContentValues contentValues = new ContentValues();
         contentValues.put(Notes.COLUMN_COURSE_ID, "");
-        contentValues.put(Notes.COLUMN_NOTE_TITLE,"");
+        contentValues.put(Notes.COLUMN_NOTE_TITLE, "");
         contentValues.put(Notes.COLUMN_NOTE_TEXT, "");
 
-        mNoteUri = getContentResolver().insert(Notes.CONTENT_URI,contentValues);
+        mNoteUri = getContentResolver().insert(Notes.CONTENT_URI, contentValues);
     }
 
     @Override
@@ -269,7 +269,7 @@ public class NoteActivity extends AppCompatActivity implements LoaderManager.Loa
             finish();
         } else if (id == R.id.action_next) {
             moveNext();
-        } else if(id == R.id.action_set_reminder){
+        } else if (id == R.id.action_set_reminder) {
             showReminderNotification();
         }
 
@@ -277,15 +277,16 @@ public class NoteActivity extends AppCompatActivity implements LoaderManager.Loa
     }
 
     private void showReminderNotification() {
-        final Bitmap picture = BitmapFactory.decodeResource(getResources(),R.drawable.ic_baseline_info_24);
+        final Bitmap picture = BitmapFactory.decodeResource(getResources(), R.drawable.ic_baseline_info_24);
         String noteText = mNoteText.getText().toString();
+        String noteTitle = mNoteTitle.getText().toString();
         Intent noteActivityIntent = new Intent(this, NoteActivity.class);
         PendingIntent noteIntent = PendingIntent.getActivity(this,
                 0, noteActivityIntent, 0);
 
         Intent mainActivityIntent = new Intent(this, MainActivity.class);
         PendingIntent coursesIntent = PendingIntent.getActivity(this,
-                0, mainActivityIntent,0);
+                0, mainActivityIntent, 0);
 
 
         @SuppressLint("ResourceAsColor") Notification notification = new NotificationCompat.Builder(this, App.NOTE_ACTIVITY_NOTIFICATION)
@@ -294,15 +295,19 @@ public class NoteActivity extends AppCompatActivity implements LoaderManager.Loa
                 .setContentText(noteText)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .setCategory(NotificationCompat.CATEGORY_MESSAGE)
+                .setStyle(new NotificationCompat.BigTextStyle()
+                        .bigText(noteText)
+                        .setBigContentTitle(noteTitle)
+                        .setSummaryText("Review Note"))
                 .setColor(R.color.colorAccent)
                 .setLargeIcon(picture)
                 .setContentIntent(noteIntent)
                 .setAutoCancel(true)
-                .addAction(R.drawable.ic_menu_gallery,"View all Notes",coursesIntent)
+                .addAction(R.drawable.ic_menu_gallery, "View all Notes", coursesIntent)
                 .setOnlyAlertOnce(true)
                 .build();
 
-        mNotificationManagerCompat.notify(1,notification);
+        mNotificationManagerCompat.notify(1, notification);
 
     }
 
@@ -370,9 +375,11 @@ public class NoteActivity extends AppCompatActivity implements LoaderManager.Loa
                 Notes.COLUMN_NOTE_TEXT
         };
         mNoteUri = ContentUris.withAppendedId(Notes.CONTENT_URI, mNoteId);
-        return new CursorLoader(this, mNoteUri, noteColumns,null,null,null);
+        return new CursorLoader(this, mNoteUri, noteColumns, null, null, null);
 
-        };
+    }
+
+    ;
 
     @Override
     public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor data) {
