@@ -1,6 +1,7 @@
 package com.lennydennis.notekeeper;
 
 import android.annotation.SuppressLint;
+import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.ContentUris;
@@ -27,6 +28,7 @@ import androidx.loader.content.CursorLoader;
 import androidx.loader.content.Loader;
 
 import android.os.Handler;
+import android.os.SystemClock;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -333,46 +335,24 @@ public class NoteActivity extends AppCompatActivity implements LoaderManager.Loa
     }
 
     private void showReminderNotification() {
-        final Bitmap picture = BitmapFactory.decodeResource(getResources(), R.drawable.ic_baseline_info_24);
         String noteText = mNoteText.getText().toString();
         String noteTitle = mNoteTitle.getText().toString();
         int noteId = (int) ContentUris.parseId(mNoteUri);
-        Intent noteActivityIntent = new Intent(this, NoteActivity.class);
-        noteActivityIntent.putExtra(NoteActivity.NOTE_ID, noteId);
-        PendingIntent noteIntent = PendingIntent.getActivity(this,
-                0, noteActivityIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        Intent mainActivityIntent = new Intent(this, MainActivity.class);
-        PendingIntent coursesIntent = PendingIntent.getActivity(this,
-                0, mainActivityIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        Intent intent = new Intent(this, NoteReminderReceiver.class);
+        intent.putExtra(NoteReminderReceiver.EXTRA_NOTE_TEXT, noteTitle);
+        intent.putExtra(NoteReminderReceiver.EXTRA_NOTE_TEXT, noteText);
+        intent.putExtra(NoteReminderReceiver.EXTRA_NOTE_ID, noteId);
 
-        Intent backUpServiceIntent = new Intent(this, NoteBackupService.class);
-        backUpServiceIntent.putExtra(NoteBackupService.EXTRA_COURSE_ID, NoteBackup.ALL_COURSES);
-        PendingIntent backupService = PendingIntent.getService(this,0,backUpServiceIntent,PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this,0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
+        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
 
+        long currentTimeInMilliseconds = SystemClock.elapsedRealtime();
+        long ONE_HOUR = 60*60*1000;
+        long alarmTime =  currentTimeInMilliseconds + ONE_HOUR;
 
-        @SuppressLint("ResourceAsColor") Notification notification = new NotificationCompat.Builder(this, App.NOTE_ACTIVITY_NOTIFICATION)
-                .setSmallIcon(R.drawable.ic_baseline_assignment_24)
-                .setContentTitle("Review Note")
-                .setContentText(noteText)
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                .setCategory(NotificationCompat.CATEGORY_MESSAGE)
-                .setStyle(new NotificationCompat.BigTextStyle()
-                        .bigText(noteText)
-                        .setBigContentTitle(noteTitle)
-                        .setSummaryText("Review Note"))
-                .setColor(R.color.colorAccent)
-                .setLargeIcon(picture)
-                .setContentIntent(noteIntent)
-                .setAutoCancel(true)
-                .addAction(0, "View All Notes", coursesIntent)
-                .addAction(0,"B ack Up Notes",backupService)
-                .setOnlyAlertOnce(true)
-                .build();
-
-        mNotificationManagerCompat.notify(1, notification);
-
+        alarmManager.set(AlarmManager.ELAPSED_REALTIME,alarmTime,pendingIntent);
     }
 
     @Override
