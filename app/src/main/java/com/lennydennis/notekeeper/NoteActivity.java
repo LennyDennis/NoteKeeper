@@ -264,7 +264,7 @@ public class NoteActivity extends AppCompatActivity implements LoaderManager.Loa
                 publishProgress(2);
 
                 try {
-                    simulate5Seconds();
+                     simulate5Seconds();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -344,6 +344,11 @@ public class NoteActivity extends AppCompatActivity implements LoaderManager.Loa
         PendingIntent coursesIntent = PendingIntent.getActivity(this,
                 0, mainActivityIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
+        Intent backUpServiceIntent = new Intent(this, NoteBackupService.class);
+        backUpServiceIntent.putExtra(NoteBackupService.EXTRA_COURSE_ID, NoteBackup.ALL_COURSES);
+        PendingIntent backupService = PendingIntent.getService(this,0,backUpServiceIntent,PendingIntent.FLAG_UPDATE_CURRENT);
+
+
 
         @SuppressLint("ResourceAsColor") Notification notification = new NotificationCompat.Builder(this, App.NOTE_ACTIVITY_NOTIFICATION)
                 .setSmallIcon(R.drawable.ic_baseline_assignment_24)
@@ -360,6 +365,7 @@ public class NoteActivity extends AppCompatActivity implements LoaderManager.Loa
                 .setContentIntent(noteIntent)
                 .setAutoCancel(true)
                 .addAction(0, "View All Notes", coursesIntent)
+                .addAction(0,"Back Up Notes",backupService)
                 .setOnlyAlertOnce(true)
                 .build();
 
