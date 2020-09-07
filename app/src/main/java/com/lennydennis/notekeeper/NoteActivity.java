@@ -365,7 +365,7 @@ public class NoteActivity extends AppCompatActivity implements LoaderManager.Loa
                 .setContentIntent(noteIntent)
                 .setAutoCancel(true)
                 .addAction(0, "View All Notes", coursesIntent)
-                .addAction(0,"Back Up Notes",backupService)
+                .addAction(0,"B ack Up Notes",backupService)
                 .setOnlyAlertOnce(true)
                 .build();
 
