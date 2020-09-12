@@ -22,7 +22,7 @@ public class NoteReminderNotification {
     public static void notify(final Context context,
                               final String noteTitle, final String noteText, int noteId) {
 
-        final Bitmap picture = BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_baseline_info_24);
+        final Bitmap picture = BitmapFactory.decodeResource(context.getResources(), R.drawable.logo);
 
         Intent noteActivityIntent = new Intent(context, NoteActivity.class);
         noteActivityIntent.putExtra(NoteActivity.NOTE_ID, noteId);

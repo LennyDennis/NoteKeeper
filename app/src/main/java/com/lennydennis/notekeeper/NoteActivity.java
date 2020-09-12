@@ -199,6 +199,8 @@ public class NoteActivity extends AppCompatActivity implements LoaderManager.Loa
         contentValues.put(NoteInfoEntry.COLUMN_NOTE_TITLE, noteTitle);
         contentValues.put(NoteInfoEntry.COLUMN_NOTE_TEXT, noteText);
 
+//        getContentResolver().update(mNoteUri,contentValues,null,null);
+
         SQLiteDatabase sqLiteDatabase = mNoteKeeperOpenHelper.getWritableDatabase();
         sqLiteDatabase.update(NoteInfoEntry.TABLE_NAME, contentValues, selection, selectionArgs);
     }

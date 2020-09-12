@@ -14,8 +14,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
         android:layout_marginTop="16dp"
-        android:layout_marginEnd="32dp"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/guideline"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -24,6 +23,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
+        android:autofillHints=""
         android:ems="10"
         android:gravity="start|top"
         android:hint="@string/note_title"
@@ -31,22 +31,21 @@
         android:textColor="@color/colorAccent"
         app:layout_constraintEnd_toEndOf="@+id/spinner_courses"
         app:layout_constraintStart_toStartOf="@+id/spinner_courses"
-        app:layout_constraintTop_toBottomOf="@+id/spinner_courses"
-        android:autofillHints="" />
+        app:layout_constraintTop_toBottomOf="@+id/spinner_courses" />
 
     <EditText
         android:id="@+id/note_text"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="16dp"
+        android:autofillHints=""
         android:ems="10"
         android:gravity="start|top"
         android:hint="@string/"
         android:inputType="textMultiLine"
-        app:layout_constraintEnd_toEndOf="@+id/note_title"
-        app:layout_constraintStart_toStartOf="@+id/note_title"
-        app:layout_constraintTop_toBottomOf="@+id/note_title"
-        android:autofillHints="" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/guideline"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ProgressBar
         android:id="@+id/progress_bar"
@@ -60,4 +59,11 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/note_text" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.500684" />
 </androidx.constraintlayout.widget.ConstraintLayout>
