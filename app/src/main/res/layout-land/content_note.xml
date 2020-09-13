@@ -41,7 +41,7 @@
         android:autofillHints=""
         android:ems="10"
         android:gravity="start|top"
-        android:hint="@string/"
+        android:hint="@string/note_text"
         android:inputType="textMultiLine"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/guideline"
@@ -55,6 +55,7 @@
         android:layout_marginStart="40dp"
         android:layout_marginTop="60dp"
         android:layout_marginEnd="32dp"
+        android:visibility="invisible"
         android:max="3"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -66,4 +67,12 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintGuide_percent="0.500684" />
+
+    <com.lennydennis.notekeeper.ModuleStatusView
+        android:id="@+id/module_status"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toStartOf="@+id/guideline"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/note_title" />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -68,6 +68,7 @@ public class NoteActivity extends AppCompatActivity implements LoaderManager.Loa
     private boolean mNoteQueryFinished;
     private Uri mNoteUri;
     private NotificationManagerCompat mNotificationManagerCompat;
+    private ModuleStatusView mModuleStatusView;
 
     @Override
     protected void onDestroy() {
@@ -111,7 +112,21 @@ public class NoteActivity extends AppCompatActivity implements LoaderManager.Loa
         if (!mIsNewNote)
             LoaderManager.getInstance(this).initLoader(LOADER_NOTES, null, this);
 
+        mModuleStatusView = findViewById(R.id.module_status);
+        loadModuleStatusValue();
+
         Log.d(TAG, "onCreate");
+    }
+
+    private void loadModuleStatusValue() {
+        int totalNumberOfModules = 11;
+        int completedNumberOfModules = 7;
+        boolean[] moduleStatus = new boolean[totalNumberOfModules];
+
+        for(int moduleIndex = 0;moduleIndex<completedNumberOfModules;moduleIndex++){
+            moduleStatus[moduleIndex]=true;
+        }
+        mModuleStatusView.setModuleStatus(moduleStatus);
     }
 
     @Override
