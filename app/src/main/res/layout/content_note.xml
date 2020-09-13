@@ -15,6 +15,7 @@
         android:layout_marginStart="32dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="32dp"
+        android:nextFocusRight="@id/note_title"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -24,15 +25,16 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
+        android:autofillHints=""
         android:ems="10"
         android:gravity="start|top"
         android:hint="@string/note_title"
         android:inputType="textMultiLine"
+        android:nextFocusRight="@id/note_text"
         android:textColor="@color/colorAccent"
         app:layout_constraintEnd_toEndOf="@+id/spinner_courses"
         app:layout_constraintStart_toStartOf="@+id/spinner_courses"
-        app:layout_constraintTop_toBottomOf="@+id/spinner_courses"
-        android:autofillHints="" />
+        app:layout_constraintTop_toBottomOf="@+id/spinner_courses" />
 
     <EditText
         android:id="@+id/note_text"
