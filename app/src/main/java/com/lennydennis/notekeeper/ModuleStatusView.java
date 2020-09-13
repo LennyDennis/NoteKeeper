@@ -8,6 +8,8 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
+import android.util.DisplayMetrics;
+import android.view.MotionEvent;
 import android.view.View;
 
 /**
@@ -15,6 +17,9 @@ import android.view.View;
  */
 public class ModuleStatusView extends View {
     private static final int EDIT_MODE_MODULE_COUNT = 7;
+    private static final int INVALID_INDEX = -1;
+    private static final int SHAPE_CIRCLE = 0;
+    private static final float OUTLINE_WIDTH_DP = 2f;
     private String mExampleString; // TODO: use a default from R.string...
     private int mExampleColor = Color.RED; // TODO: use a default from R.color...
     private float mExampleDimension = 0; // TODO: use a default from R.dimen...
@@ -33,6 +38,7 @@ public class ModuleStatusView extends View {
     private Paint mPaintFill;
     private float mRadius;
     private int mMaxHorizontalModules;
+    private int mShape;
 
     public boolean[] getModuleStatus() {
         return mModuleStatus;
@@ -61,9 +67,18 @@ public class ModuleStatusView extends View {
 
         if(isInEditMode())
             setUpEditModeValues();
+
+        DisplayMetrics displayMetrics = getContext().getResources().getDisplayMetrics();
+        float displayDensity = displayMetrics.density;
+        float defaultOutlineWidthPixels = displayDensity * OUTLINE_WIDTH_DP;
+
         // Load attributes
         final TypedArray a = getContext().obtainStyledAttributes(
                 attrs, R.styleable.ModuleStatusView, defStyle, 0);
+
+        mOutlineColor = a.getColor(R.styleable.ModuleStatusView_outlineColor, Color.BLACK);
+        mShape = a.getInt(R.styleable.ModuleStatusView_shape, SHAPE_CIRCLE);
+        mOutlineWidth = a.getDimension(R.styleable.ModuleStatusView_outlineWidth,defaultOutlineWidthPixels);
 
         a.recycle();
 
@@ -72,7 +87,6 @@ public class ModuleStatusView extends View {
         mSpacing = 20f;
         mRadius = (mShapeSize - mOutlineWidth)/2;
 
-        mOutlineColor = Color.BLACK;
         mPaintOutline = new Paint(Paint.ANTI_ALIAS_FLAG);
         mPaintOutline.setStyle(Paint.Style.STROKE);
         mPaintOutline.setColor(mOutlineColor);
@@ -140,18 +154,62 @@ public class ModuleStatusView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-
-        for(int moduleIndex =  0 ; moduleIndex<mModuleRectangle.length;moduleIndex++){
-            float x = mModuleRectangle[moduleIndex].centerX();
-            float y = mModuleRectangle[moduleIndex].centerY();
-
-            if(mModuleStatus[moduleIndex])
-                canvas.drawCircle(x,y, mRadius, mPaintFill);
-
-            canvas.drawCircle(x,y, mRadius,mPaintOutline);
-
-
+        for(int moduleIndex=0; moduleIndex < mModuleRectangle.length; moduleIndex++) {
+            if(mShape == SHAPE_CIRCLE) {
+                float x = mModuleRectangle[moduleIndex].centerX();
+                float y = mModuleRectangle[moduleIndex].centerY();
+                if (mModuleStatus[moduleIndex])
+                    canvas.drawCircle(x, y, mRadius, mPaintFill);
+                canvas.drawCircle(x, y, mRadius, mPaintOutline);
+            } else {
+                drawSquare(canvas, moduleIndex);
+            }
         }
+    }
+
+    private void drawSquare(Canvas canvas, int moduleIndex) {
+        Rect moduleRectangle = mModuleRectangle[moduleIndex];
+
+        if(mModuleStatus[moduleIndex])
+            canvas.drawRect(moduleRectangle, mPaintFill);
+
+        canvas.drawRect(moduleRectangle.left + (mOutlineWidth/2),
+                moduleRectangle.top + (mOutlineWidth/2),
+                moduleRectangle.right - (mOutlineWidth/2),
+                moduleRectangle.bottom - (mOutlineWidth/2),
+                mPaintOutline);
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        switch (event.getAction()){
+            case MotionEvent.ACTION_DOWN:
+                return true;
+            case MotionEvent.ACTION_UP:
+                int moduleIndex = findItemAtPoint(event.getX(), event.getY());
+                onModuleSelected(moduleIndex);
+                return true;
+        }
+        return super.onTouchEvent(event);
+    }
+
+    private void onModuleSelected(int moduleIndex) {
+        if(moduleIndex == INVALID_INDEX)
+            return;
+
+        mModuleStatus[moduleIndex] =! mModuleStatus[moduleIndex];
+        invalidate();
+    }
+
+    private int findItemAtPoint(float x, float y) {
+        int moduleIndex = INVALID_INDEX;
+        for (int i =0; i<mModuleRectangle.length;i++){
+            if(mModuleRectangle[i].contains((int) x, (int) y)){
+                moduleIndex = 1;
+                break;
+            }
+        }
+        return moduleIndex;
     }
 
     /**
